@@ -105,3 +105,53 @@ if __name__ == "__main__":
     print()
     print("=== Tests Completed ===")
     print()
+
+    # ===============================
+# FireCreature Branch
+# ===============================
+
+class FireCreature(Creature):
+    MIN_FIRE = 0
+    MAX_FIRE = 100
+
+    def __init__(self, name, hp, attack_power, fire_level=0):
+        super().__init__(name, hp, attack_power)
+        self.fire_level = self._clamp_fire(fire_level)
+
+    def _clamp_fire(self, level):
+        # Keep fire_level inside 0-100
+        return max(self.MIN_FIRE, min(self.MAX_FIRE, level))
+
+    def emit_fire(self, new_fire_level):
+        clamped = self._clamp_fire(new_fire_level)
+        if clamped != new_fire_level:
+            print(f"Fire level {new_fire_level} is out of range (0-100). Using {clamped}.")
+        self.fire_level = clamped
+        print(f"{self.name} emits fire! Fire level is now {self.fire_level}.")
+
+    def fire_damage(self):
+        # Every 10 points of fire_level adds 1 bonus damage (max +10)
+        return self.fire_level // 10
+
+    def attack(self, target):
+        if not self.is_alive():
+            print(f"{self.name} cannot attack because it is defeated.")
+            return
+
+        bonus = self.fire_damage()
+        total_damage = self.attack_power + bonus
+        print(f"{self.name} breathes fire at level {self.fire_level}!")
+        print(f"It burns {target.name} for {self.attack_power} + {bonus} fire = {total_damage} damage!")
+        target.hp -= total_damage
+        if target.hp < 0:
+            target.hp = 0
+        print(f"{target.name} HP is now {target.hp}")
+
+if __name__ == "__main__":
+    print("=== Creature Class Tests ===\n")
+
+   #test1
+    goblin = Creature("Goblin", 30, 5)
+    print("Test 1: Initialization")
+    print(goblin)
+    print()
